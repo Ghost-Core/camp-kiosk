@@ -1,0 +1,1054 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Camp Kiosk</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏕️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#EFF3EC; --surface:#FFFFFF; --surface2:#E6EDE2; --ink:#1C2B22; --muted:#5C6C60;
+  --line:#D5DFD0; --pine:#2F6B52; --pine-soft:#DCE9E0; --on-pine:#FFFFFF;
+  --lake:#33627F; --lake-soft:#DEE9F0; --ember:#BC5730; --ember-soft:#F4E3D9;
+  --ok:#3A7D44; --focus:#33627F;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121A15; --surface:#1B2620; --surface2:#233129; --ink:#E7EEE8; --muted:#97A99B;
+    --line:#2D3D33; --pine:#74B695; --pine-soft:#24382E; --on-pine:#0F1A14;
+    --lake:#82B2CD; --lake-soft:#1F313C; --ember:#E08D62; --ember-soft:#3A2A20;
+    --ok:#7CBF87; --focus:#82B2CD;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121A15; --surface:#1B2620; --surface2:#233129; --ink:#E7EEE8; --muted:#97A99B;
+  --line:#2D3D33; --pine:#74B695; --pine-soft:#24382E; --on-pine:#0F1A14;
+  --lake:#82B2CD; --lake-soft:#1F313C; --ember:#E08D62; --ember-soft:#3A2A20;
+  --ok:#7CBF87; --focus:#82B2CD;
+}
+*{box-sizing:border-box}
+html,body{margin:0; padding:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:"Instrument Sans",system-ui,-apple-system,sans-serif;
+  font-size:15.5px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+button{font:inherit; color:inherit; cursor:pointer}
+input,select{font:inherit; color:var(--ink)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--focus); outline-offset:2px}
+.wrap{max-width:720px; margin:0 auto; padding:0 14px 96px}
+
+/* ---------- hero ---------- */
+header{position:relative; overflow:hidden; background:var(--surface2); border-bottom:1px solid var(--line)}
+#topo{position:absolute; inset:0; width:100%; height:100%; opacity:.5; pointer-events:none}
+.hero{position:relative; max-width:720px; margin:0 auto; padding:26px 14px 18px}
+.eyebrow{font-size:12px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--muted)}
+h1{
+  font-family:"Bricolage Grotesque","Instrument Sans",system-ui,sans-serif;
+  font-size:clamp(34px,9vw,46px); font-weight:800; line-height:1.02;
+  margin:4px 0 10px; text-wrap:balance; letter-spacing:-.01em;
+}
+.hero-chips{display:flex; flex-wrap:wrap; gap:8px}
+.chip{
+  display:inline-flex; align-items:center; gap:6px;
+  background:var(--surface); border:1px solid var(--line); border-radius:999px;
+  padding:5px 12px; font-size:13px; font-weight:600;
+}
+.chip .dot{width:7px; height:7px; border-radius:50%; background:var(--ember); flex:none}
+.chip .dot.blue{background:var(--lake)}
+.chip .dot.green{background:var(--pine)}
+
+/* ---------- identity bar ---------- */
+.mebar{
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  margin:14px 0 4px; padding:12px 14px;
+  background:var(--surface); border:1px solid var(--line); border-radius:14px;
+}
+.mebar .lbl{font-size:13px; font-weight:600; color:var(--muted); flex:none}
+.mebar .who{display:flex; gap:6px; flex-wrap:wrap}
+
+/* ---------- tabs ---------- */
+nav{position:sticky; top:0; z-index:20; background:var(--bg); padding:10px 0 12px; margin:6px 0 4px}
+.tabs{
+  display:grid; grid-template-columns:repeat(5,1fr); gap:4px;
+  background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:4px;
+}
+.tab{
+  border:0; background:transparent; border-radius:10px; padding:9px 2px;
+  font-family:"Bricolage Grotesque",sans-serif; font-weight:600; font-size:13.5px;
+  color:var(--muted); transition:background .15s,color .15s;
+}
+.tab[aria-selected="true"]{background:var(--pine); color:var(--on-pine)}
+@media (prefers-reduced-motion:reduce){ .tab{transition:none} }
+
+/* ---------- cards & sections ---------- */
+section[role="tabpanel"]{display:none}
+section[role="tabpanel"].on{display:block}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px; margin:12px 0}
+h2{font-family:"Bricolage Grotesque",sans-serif; font-size:19px; font-weight:700; margin:0 0 4px; letter-spacing:-.01em}
+h3{font-family:"Bricolage Grotesque",sans-serif; font-size:15px; font-weight:700; margin:0}
+.sub{color:var(--muted); font-size:13.5px; margin:0 0 10px}
+.kicker{font-size:11.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--pine); margin:18px 0 6px}
+
+/* ---------- stats ---------- */
+.stats{display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin:14px 0}
+@media(min-width:520px){.stats{grid-template-columns:repeat(4,1fr)}}
+.stat{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:12px 14px}
+.stat b{display:block; font-family:"Bricolage Grotesque",sans-serif; font-size:23px; font-weight:800; font-variant-numeric:tabular-nums; line-height:1.15}
+.stat span{font-size:12.5px; color:var(--muted); font-weight:600}
+.meter{height:5px; border-radius:99px; background:var(--surface2); margin-top:8px; overflow:hidden}
+.meter i{display:block; height:100%; background:var(--pine); border-radius:99px}
+
+/* ---------- weather / facts / tips ---------- */
+.wx{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.wx .day{background:var(--surface2); border-radius:12px; padding:12px 14px}
+.wx .t{font-family:"Bricolage Grotesque",sans-serif; font-size:21px; font-weight:800; font-variant-numeric:tabular-nums}
+.wx small{color:var(--muted); font-weight:600}
+.wx .rain{color:var(--lake); font-weight:700; font-size:13px}
+.facts{display:grid; gap:0; font-size:14.5px; margin:0}
+.facts>div{display:flex; gap:12px; padding:9px 0; border-top:1px solid var(--line)}
+.facts>div:first-child{border-top:0}
+.facts dt{flex:0 0 96px; color:var(--muted); font-weight:600; font-size:13px; padding-top:1px}
+.facts dd{margin:0; flex:1}
+.mono{font-variant-numeric:tabular-nums; letter-spacing:.02em}
+.tipslist{margin:0; padding-left:0; list-style:none}
+.tipslist li{padding:7px 0 7px 24px; position:relative; border-top:1px solid var(--line); font-size:14.5px}
+.tipslist li:first-child{border-top:0}
+.tipslist li::before{content:""; position:absolute; left:4px; top:14px; width:8px; height:8px; border-radius:50%; background:var(--pine)}
+
+/* ---------- item rows ---------- */
+.rows{display:flex; flex-direction:column}
+.row{display:flex; align-items:flex-start; gap:10px; padding:11px 0; border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.row .body{flex:1; min-width:0}
+.row .name{font-weight:600; overflow-wrap:anywhere}
+.row .name.done{text-decoration:line-through; color:var(--muted); font-weight:500}
+.row .note{font-size:13px; color:var(--muted)}
+.check{
+  flex:none; width:24px; height:24px; margin-top:1px;
+  border:2px solid var(--line); border-radius:8px; background:var(--surface);
+  display:inline-flex; align-items:center; justify-content:center; padding:0;
+}
+.check.on{background:var(--pine); border-color:var(--pine); color:var(--on-pine)}
+.check svg{width:14px; height:14px; display:none}
+.check.on svg{display:block}
+.claim{
+  flex:none; border:1px solid var(--line); background:var(--surface); border-radius:999px;
+  padding:4px 12px; font-size:12.5px; font-weight:700; margin-top:1px;
+}
+.owner-tag{
+  flex:none; display:inline-flex; align-items:center; gap:6px; margin-top:1px;
+  background:var(--surface2); border-radius:999px; padding:4px 12px 4px 6px;
+  font-size:12.5px; font-weight:700; border:0;
+}
+.avatar{
+  width:20px; height:20px; border-radius:50%; background:var(--pine); color:var(--on-pine);
+  display:inline-flex; align-items:center; justify-content:center;
+  font-size:10.5px; font-weight:800; flex:none;
+}
+.pchip{border:1.5px solid var(--line); background:var(--surface); border-radius:999px; padding:5px 13px; font-size:13.5px; font-weight:600}
+.pchip.me{border-color:var(--pine); background:var(--pine-soft); color:var(--pine)}
+.del{border:0; background:transparent; color:var(--muted); font-size:12px; font-weight:600; padding:2px 4px; flex:none; margin-top:3px}
+
+/* ---------- multi-claim gear ---------- */
+.gearrow{display:flex; flex-direction:column; gap:8px; padding:12px 0; border-top:1px solid var(--line)}
+.gearrow:first-child{border-top:0}
+.gtop{display:flex; align-items:flex-start; gap:10px}
+.gtop .body{flex:1; min-width:0}
+.countpill{
+  flex:none; min-width:44px; text-align:center; margin-top:1px;
+  border-radius:999px; padding:4px 9px; font-size:12.5px; font-weight:800;
+  font-variant-numeric:tabular-nums; background:var(--surface2); color:var(--muted);
+}
+.countpill.partial{background:var(--lake-soft); color:var(--lake)}
+.countpill.full{background:var(--pine-soft); color:var(--pine)}
+.needbtn{
+  flex:none; border:1px dashed var(--line); background:transparent; border-radius:999px;
+  padding:4px 10px; font-size:12px; font-weight:700; color:var(--muted); margin-top:1px;
+}
+.bringers{display:flex; flex-wrap:wrap; gap:6px; padding-left:54px}
+.bringers:empty{display:none}
+.bringer{
+  display:inline-flex; align-items:center; gap:6px;
+  background:var(--surface2); border:1.5px solid transparent; border-radius:999px;
+  padding:3px 10px 3px 5px; font-size:12.5px; font-weight:700;
+}
+.bringer.me{border-color:var(--pine); background:var(--pine-soft)}
+.bringer.packed .bname{text-decoration:line-through; opacity:.75}
+.bringer .tick{
+  width:17px; height:17px; border-radius:50%; border:1.5px solid var(--muted);
+  display:inline-flex; align-items:center; justify-content:center; flex:none;
+  background:transparent; padding:0; color:transparent; font-size:10px; line-height:1;
+}
+.bringer.packed .tick{background:var(--pine); border-color:var(--pine); color:var(--on-pine)}
+.bringer .out{border:0; background:none; color:var(--muted); font-size:11px; padding:0 0 0 2px}
+@media(max-width:480px){ .bringers{padding-left:0} }
+
+/* ---------- add forms ---------- */
+.addbtn{
+  width:100%; margin-top:10px; padding:10px; border-radius:11px;
+  border:1.5px dashed var(--line); background:transparent; color:var(--muted);
+  font-weight:600; font-size:13.5px;
+}
+.addform{display:none; margin-top:10px; gap:8px; flex-direction:column}
+.addform.on{display:flex}
+.addform input[type=text],.addform input[type=number],.addform select{
+  width:100%; padding:9px 12px; border-radius:10px; border:1.5px solid var(--line);
+  background:var(--surface); min-width:0;
+}
+.frow{display:flex; gap:8px}
+.frow>*{flex:1}
+.btn{border:0; border-radius:10px; padding:10px 16px; font-weight:700; font-size:14px; background:var(--pine); color:var(--on-pine)}
+.btn.ghost{background:transparent; color:var(--muted); border:1.5px solid var(--line)}
+.splitchips{display:flex; flex-wrap:wrap; gap:6px}
+
+/* ---------- money ---------- */
+.money-total{font-family:"Bricolage Grotesque",sans-serif; font-size:34px; font-weight:800; font-variant-numeric:tabular-nums; line-height:1.1}
+.amount{font-weight:700; font-variant-numeric:tabular-nums; flex:none; margin-top:1px}
+.settle{background:var(--ember-soft); border-radius:12px; padding:12px 14px; margin-top:6px}
+.settle .line{display:flex; justify-content:space-between; gap:10px; padding:5px 0; font-size:14.5px}
+.settle .line b{font-variant-numeric:tabular-nums; color:var(--ember)}
+.balances .line{display:flex; justify-content:space-between; padding:6px 0; border-top:1px solid var(--line); font-size:14.5px}
+.balances .line:first-child{border-top:0}
+.balances b{font-variant-numeric:tabular-nums}
+.pos{color:var(--ok)} .neg{color:var(--ember)}
+
+/* ---------- misc ---------- */
+.banner{display:none; margin:12px 0 0; padding:10px 14px; border-radius:12px; background:var(--lake-soft); color:var(--lake); font-size:13.5px; font-weight:600}
+.banner.on{display:block}
+#toast{
+  position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(80px);
+  background:var(--ink); color:var(--bg); padding:10px 18px; border-radius:999px;
+  font-size:13.5px; font-weight:600; opacity:0; transition:transform .25s,opacity .25s;
+  z-index:50; max-width:88vw; text-align:center;
+}
+#toast.on{transform:translateX(-50%) translateY(0); opacity:1}
+@media (prefers-reduced-motion:reduce){ #toast{transition:none} }
+#syncbadge{
+  position:fixed; right:14px; bottom:18px; z-index:40;
+  background:var(--surface); border:1px solid var(--line); border-radius:999px;
+  padding:6px 13px; font-size:12px; font-weight:700; color:var(--muted);
+}
+#syncbadge.busy{color:var(--lake)}
+footer{color:var(--muted); font-size:12.5px; text-align:center; padding:26px 0 8px}
+
+/* ---------- password gate ---------- */
+#app.gated{display:none}
+#gate{position:fixed; inset:0; z-index:100; display:flex; align-items:center; justify-content:center; background:var(--bg); padding:20px}
+#gate[hidden]{display:none}
+.gatecard{width:100%; max-width:360px; background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:28px 24px; text-align:center}
+.gatecard .eyebrow{margin-bottom:2px}
+.gatecard h2{font-size:26px; margin:2px 0 2px; letter-spacing:-.01em}
+.gatecard p{color:var(--muted); font-size:13.5px; margin:0 0 16px}
+.gatecard input{width:100%; padding:11px 14px; border-radius:11px; border:1.5px solid var(--line); background:var(--surface); text-align:center; font-size:16px; letter-spacing:.06em}
+.gatecard .btn{width:100%; margin-top:10px; padding:12px}
+.gateerr{color:var(--ember); font-size:13px; font-weight:600; min-height:18px; margin-top:8px}
+</style>
+</head>
+<body>
+
+<div id="app" class="gated">
+<header>
+  <canvas id="topo"></canvas>
+  <div class="hero">
+    <div class="eyebrow">Algonquin Provincial Park · Kiosk Campground · Site 12</div>
+    <h1>Camp Kiosk</h1>
+    <div class="hero-chips">
+      <span class="chip"><span class="dot green"></span>Fri Aug 28 → Sat Aug 29</span>
+      <span class="chip"><span class="dot"></span><span id="countdown">Check-in 2 pm</span></span>
+      <span class="chip"><span class="dot blue"></span>Fri night 9°C — pack warm</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="mebar">
+    <span class="lbl">You are</span>
+    <span class="who" id="who"></span>
+  </div>
+  <div class="banner" id="robanner">Saving isn’t connected on this copy — you can browse, but changes won’t stick.</div>
+
+  <nav aria-label="Sections">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" data-tab="plan" aria-selected="true">Plan</button>
+      <button class="tab" role="tab" data-tab="gear" aria-selected="false">Gear</button>
+      <button class="tab" role="tab" data-tab="money" aria-selected="false">Money</button>
+      <button class="tab" role="tab" data-tab="jobs" aria-selected="false">Jobs</button>
+      <button class="tab" role="tab" data-tab="pack" aria-selected="false">My pack</button>
+    </div>
+  </nav>
+
+  <!-- ============ PLAN ============ -->
+  <section role="tabpanel" id="panel-plan" class="on">
+    <div class="stats" id="stats"></div>
+
+    <div class="card">
+      <h2>The forecast</h2>
+      <p class="sub">Mattawa / north Algonquin — checked Aug 27</p>
+      <div class="wx">
+        <div class="day">
+          <small>Friday · arrival</small>
+          <div class="t">20° / 9°</div>
+          <div class="rain">60% light rain</div>
+          <small>Wind W 10–28 km/h</small>
+        </div>
+        <div class="day">
+          <small>Saturday</small>
+          <div class="t">23° / 10°</div>
+          <div class="rain">40% stray shower</div>
+          <small>Clearing, breezy</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Trip facts</h2>
+      <dl class="facts">
+        <div><dt>Reservation</dt><dd class="mono">INOP26-12210570B1 · Site 12</dd></div>
+        <div><dt>Check-in</dt><dd>Friday Aug 28, 2:00 pm</dd></div>
+        <div><dt>Check-out</dt><dd>Saturday Aug 29, 2:00 pm</dd></div>
+        <div><dt>Getting there</dt><dd>Hwy 630 south off Hwy 17, then 30 km in. Mattawa, ON P0H 1V0</dd></div>
+        <div><dt>Park office</dt><dd class="mono">705-633-5572</dd></div>
+      </dl>
+    </div>
+
+    <div class="card">
+      <h2>Good to know</h2>
+      <ul class="tipslist">
+        <li>Flush toilets, but <b>no showers</b> — pack wipes and a towel for the lake.</li>
+        <li>Beach and canoe launch on Kiosk Lake. Canoe rentals at the Hwy 630 entrance (Algonquin North outfitters).</li>
+        <li>Buy firewood near the park — bringing wood from home is banned (invasive species).</li>
+        <li>Bear country: all food and anything scented sleeps in the car, never the tent.</li>
+        <li>Quiet hours from 10 pm — small campground, close neighbours.</li>
+        <li>Little to no cell signal — download maps and playlists before Hwy 630.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>The crew</h2>
+      <p class="sub">Everyone on the trip. Add yourself, then tap your name up top so claims are one tap.</p>
+      <div class="splitchips" id="crewlist"></div>
+      <button class="addbtn" data-open="addperson">+ Add a person</button>
+      <form class="addform" id="addperson">
+        <input type="text" name="name" placeholder="Name" maxlength="24" required>
+        <div class="frow">
+          <button class="btn" type="submit">Add</button>
+          <button class="btn ghost" type="button" data-close>Cancel</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ GEAR ============ -->
+  <section role="tabpanel" id="panel-gear">
+    <div class="card">
+      <h2>Group gear</h2>
+      <p class="sub">Tap <b>Claim</b> to bring an item — several people can claim the same one (tents, meat…). The <b>×N</b> button sets how many are needed. Tap the circle on your chip once yours is packed.</p>
+      <div id="gearlist"></div>
+      <button class="addbtn" data-open="addgear">+ Add an item</button>
+      <form class="addform" id="addgear">
+        <input type="text" name="name" placeholder="What is it?" maxlength="60" required>
+        <input type="text" name="note" placeholder="Note (optional)" maxlength="80">
+        <div class="frow">
+          <select name="cat"></select>
+          <select name="need"><option value="1">1 needed</option><option value="2">2 needed</option><option value="3">3 needed</option><option value="4">4 needed</option><option value="5">5 needed</option><option value="6">6 needed</option></select>
+        </div>
+        <div class="frow">
+          <button class="btn" type="submit">Add item</button>
+          <button class="btn ghost" type="button" data-close>Cancel</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ MONEY ============ -->
+  <section role="tabpanel" id="panel-money">
+    <div class="card">
+      <h2>Spent so far</h2>
+      <div class="money-total" id="moneytotal">$0.00</div>
+      <p class="sub">All amounts in CAD, split equally unless you choose otherwise.</p>
+      <div class="kicker">Who owes what</div>
+      <div class="balances" id="balances"></div>
+      <div class="settle" id="settle" hidden>
+        <h3>Easiest settle-up</h3>
+        <div id="settlelines"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Expenses</h2>
+      <div class="rows" id="expenselist"></div>
+      <button class="addbtn" data-open="addexpense">+ Add an expense</button>
+      <form class="addform" id="addexpense">
+        <input type="text" name="desc" placeholder="What was it? (groceries, gas, site fee…)" maxlength="60" required>
+        <div class="frow">
+          <input type="number" name="amount" placeholder="Amount $" min="0.01" step="0.01" inputmode="decimal" required>
+          <select name="paidBy"></select>
+        </div>
+        <div class="kicker" style="margin:4px 0 0">Split between</div>
+        <div class="splitchips" id="splitpick"></div>
+        <div class="frow">
+          <button class="btn" type="submit">Add expense</button>
+          <button class="btn ghost" type="button" data-close>Cancel</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ JOBS ============ -->
+  <section role="tabpanel" id="panel-jobs">
+    <div class="card">
+      <h2>Who does what</h2>
+      <p class="sub">Claim a job so nothing lands on one person. Tick it when it’s done.</p>
+      <div class="rows" id="joblist"></div>
+      <button class="addbtn" data-open="addjob">+ Add a job</button>
+      <form class="addform" id="addjob">
+        <input type="text" name="title" placeholder="What needs doing?" maxlength="60" required>
+        <input type="text" name="note" placeholder="Note (optional)" maxlength="80">
+        <div class="frow">
+          <button class="btn" type="submit">Add job</button>
+          <button class="btn ghost" type="button" data-close>Cancel</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ MY PACK ============ -->
+  <section role="tabpanel" id="panel-pack">
+    <div class="card">
+      <h2>Your personal packing list</h2>
+      <p class="sub">Private to this device — everyone gets their own copy of this checklist.</p>
+      <div id="packlist"></div>
+      <button class="addbtn" data-open="addpack">+ Add your own item</button>
+      <form class="addform" id="addpack">
+        <input type="text" name="name" placeholder="Item" maxlength="60" required>
+        <div class="frow">
+          <button class="btn" type="submit">Add</button>
+          <button class="btn ghost" type="button" data-close>Cancel</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <footer>Camp Kiosk · Aug 28–29, 2026 · changes sync for everyone with the link</footer>
+</div>
+
+<div id="toast" role="status"></div>
+<div id="syncbadge">Loading…</div>
+</div><!-- /app -->
+
+<div id="gate">
+  <form class="gatecard" id="gateform">
+    <div class="eyebrow">Camp Kiosk · Aug 28–29</div>
+    <h2>Crew only</h2>
+    <p>Enter the trip password to open the organizer.</p>
+    <input type="password" id="gatepw" autocomplete="current-password" placeholder="Password" aria-label="Trip password">
+    <button class="btn" type="submit">Open</button>
+    <div class="gateerr" id="gateerr" role="alert"></div>
+  </form>
+</div>
+
+<script id="trip-state" type="application/json">{"people":[{"id":"p1","name":"Amin"}],"gear":[{"id":"g1","cat":"Shelter & sleep","name":"Tent","note":"check poles + pegs before packing","owners":[],"need":2},{"id":"g2","cat":"Shelter & sleep","name":"Tarp + rope","note":"rain cover for the table","owners":[],"need":1},{"id":"g3","cat":"Shelter & sleep","name":"Ground sheet","note":"","owners":[],"need":1},{"id":"g4","cat":"Shelter & sleep","name":"Mallet","note":"for tent pegs","owners":[],"need":1},{"id":"g5","cat":"Shelter & sleep","name":"Extra blankets","note":"9°C overnight — bring more than you think","owners":[],"need":1},{"id":"g6","cat":"Kitchen","name":"Camp stove + fuel","note":"backup if rain kills the fire","owners":[],"need":1},{"id":"g7","cat":"Kitchen","name":"Lighter + matches","note":"keep one set dry","owners":[],"need":1},{"id":"g8","cat":"Kitchen","name":"Pot + frying pan","note":"","owners":[],"need":1},{"id":"g9","cat":"Kitchen","name":"Cooler","note":"","owners":[],"need":1},{"id":"g10","cat":"Kitchen","name":"Water jug","note":"fill at the campground tap","owners":[],"need":1},{"id":"g11","cat":"Kitchen","name":"Plates, cups, cutlery","note":"for the whole group","owners":[],"need":1},{"id":"g12","cat":"Kitchen","name":"Knife + cutting board","note":"","owners":[],"need":1},{"id":"g13","cat":"Kitchen","name":"Paper towel + garbage bags","note":"","owners":[],"need":1},{"id":"g14","cat":"Kitchen","name":"Dish soap + sponge","note":"no dishwashing at the taps","owners":[],"need":1},{"id":"g15","cat":"Kitchen","name":"Coffee kit","note":"kettle or french press + coffee","owners":[],"need":1},{"id":"g16","cat":"Food & cooler","name":"Friday dinner food","note":"plan the menu in Jobs","owners":[],"need":1},{"id":"g17","cat":"Food & cooler","name":"Saturday breakfast food","note":"","owners":[],"need":1},{"id":"g18","cat":"Food & cooler","name":"Snacks + s'mores kit","note":"marshmallows, chocolate, crackers","owners":[],"need":1},{"id":"g19","cat":"Food & cooler","name":"Drinks","note":"","owners":[],"need":1},{"id":"g20","cat":"Food & cooler","name":"Ice","note":"buy on the drive up","owners":[],"need":1},{"id":"g21","cat":"Fire","name":"Firewood","note":"buy near the park — moving firewood in is banned","owners":[],"need":1},{"id":"g22","cat":"Fire","name":"Fire starters","note":"","owners":[],"need":1},{"id":"g23","cat":"Fire","name":"Hatchet or folding saw","note":"","owners":[],"need":1},{"id":"g24","cat":"Camp comfort","name":"Camp chairs","note":"one each","owners":[],"need":1},{"id":"g25","cat":"Camp comfort","name":"Lantern","note":"","owners":[],"need":1},{"id":"g26","cat":"Camp comfort","name":"Power bank","note":"no outlets at the site","owners":[],"need":1},{"id":"g27","cat":"Camp comfort","name":"First aid kit","note":"","owners":[],"need":1},{"id":"g28","cat":"Camp comfort","name":"Bug spray + sunscreen","note":"","owners":[],"need":1},{"id":"g29","cat":"Camp comfort","name":"Cards / games","note":"","owners":[],"need":1},{"id":"g30","cat":"Camp comfort","name":"Speaker","note":"quiet hours from 10 pm","owners":[],"need":1}],"jobs":[{"id":"j1","title":"Book the campsite","note":"Site 12, reservation INOP26-12210570B1","owner":"p1","done":true},{"id":"j2","title":"Plan the meals","note":"Fri dinner, Sat breakfast — decide before the grocery run","owner":null,"done":false},{"id":"j3","title":"Grocery run","note":"use the Food & cooler list in Gear","owner":null,"done":false},{"id":"j4","title":"Buy ice + firewood on the drive","note":"near the park, not from home","owner":null,"done":false},{"id":"j5","title":"Sort the carpool","note":"who drives, who rides with whom, gas split goes in Money","owner":null,"done":false},{"id":"j6","title":"Pack the car Thursday night","note":"check-in is 2 pm Friday — leave early","owner":null,"done":false},{"id":"j7","title":"Set up the tent","note":"first thing at the site","owner":null,"done":false},{"id":"j8","title":"Cook Friday dinner","note":"","owner":null,"done":false},{"id":"j9","title":"Friday dishes","note":"","owner":null,"done":false},{"id":"j10","title":"Saturday coffee + breakfast","note":"","owner":null,"done":false},{"id":"j11","title":"Food into the car overnight","note":"bear country — nothing edible in the tent","owner":null,"done":false},{"id":"j12","title":"Pack down + trash out","note":"checkout is 2 pm Saturday","owner":null,"done":false}],"expenses":[],"v":2}</script>
+
+<script>
+"use strict";
+/* ================= config ================= */
+const REPO = "Ghost-Core/camp-kiosk";
+const DATA_PATH = "state.json";
+const BRANCH = "main";
+const GATE_SHA = "46f98e5c07ca50de5f905f20cebe3ded9635cc133b4af932ff6bd9744d6e9c9f";
+/* Scoped write credential, AES-GCM–encrypted with the trip password.
+   null until connected. Shape: {s:saltB64, i:ivB64, c:ctB64} */
+const TOKEN_ENC = {"s":"Mp81RaihNgvQoSlISJrw3w==","i":"ElZSEjDjAZwit/Up","c":"1SB5Vk3ZQLoSwpXbFdosZaV+9ETyFhJuoV/L3hglw1fyHBKZ/9zTv+pAaclqh0KPApnHNzFZdAMlnRCMfooY3mHUJV40dtIO21DVSFrTd6864lqjgiv9/bS5MaBUZzGaKht9iYPd0y8ZnAxBEA=="};
+
+/* ================= tiny utils ================= */
+const $ = (s,el)=> (el||document).querySelector(s);
+const $$ = (s,el)=> Array.from((el||document).querySelectorAll(s));
+const esc = s => String(s??"").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = p => p + Math.random().toString(36).slice(2,9);
+const fmt = n => "$" + (Math.round(n*100)/100).toFixed(2);
+const initials = n => n.trim().split(/\s+/).map(w=>w[0]).join("").slice(0,2).toUpperCase();
+const store = {
+  get(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } },
+  set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+};
+const sess = {
+  get(k){ try{ return sessionStorage.getItem(k); }catch(e){ return null; } },
+  set(k,v){ try{ sessionStorage.setItem(k,v); }catch(e){} }
+};
+function b64encUtf8(s){
+  const bytes = new TextEncoder().encode(s);
+  let bin = "";
+  for (let i=0;i<bytes.length;i+=0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i,i+0x8000));
+  return btoa(bin);
+}
+function b64decUtf8(b){
+  const bin = atob(b.replace(/\s/g,""));
+  const bytes = new Uint8Array(bin.length);
+  for (let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+function b64ToBytes(b){
+  const bin = atob(b);
+  const out = new Uint8Array(bin.length);
+  for (let i=0;i<bin.length;i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+function toast(msg){
+  const t = $("#toast"); t.textContent = msg; t.classList.add("on");
+  clearTimeout(toast._t); toast._t = setTimeout(()=>t.classList.remove("on"), 2600);
+}
+function badge(txt, busy){
+  const b = $("#syncbadge"); b.textContent = txt; b.classList.toggle("busy", !!busy);
+}
+
+/* ================= password gate + credential unlock ================= */
+let TOKEN = null;           /* decrypted write credential, memory only */
+let unlockedPw = null;
+async function sha256hex(s){
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+async function tryDecryptToken(pw){
+  if (!TOKEN_ENC) return null;
+  try{
+    const salt = b64ToBytes(TOKEN_ENC.s), iv = b64ToBytes(TOKEN_ENC.i), ct = b64ToBytes(TOKEN_ENC.c);
+    const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(pw), "PBKDF2", false, ["deriveKey"]);
+    const key = await crypto.subtle.deriveKey(
+      {name:"PBKDF2", salt, iterations:310000, hash:"SHA-256"},
+      base, {name:"AES-GCM", length:256}, false, ["decrypt"]);
+    const pt = await crypto.subtle.decrypt({name:"AES-GCM", iv}, key, ct);
+    return new TextDecoder().decode(pt);
+  }catch(e){ return null; }
+}
+async function unlockWith(pw){
+  const h = await sha256hex(pw);
+  if (h !== GATE_SHA) return false;
+  unlockedPw = pw;
+  store.set("ck-pw", pw);
+  TOKEN = await tryDecryptToken(pw);
+  document.getElementById("app").classList.remove("gated");
+  const g = document.getElementById("gate"); if (g) g.hidden = true;
+  startSync();
+  return true;
+}
+(async function bootGate(){
+  const saved = store.get("ck-pw");
+  if (saved && await unlockWith(saved).catch(()=>false)) return;
+  const form = document.getElementById("gateform");
+  form.addEventListener("submit", async ev=>{
+    ev.preventDefault();
+    const val = document.getElementById("gatepw").value.trim();
+    if (await unlockWith(val)){ /* in */ }
+    else{
+      document.getElementById("gateerr").textContent = "That’s not it — ask the group chat.";
+      document.getElementById("gatepw").select();
+    }
+  });
+  setTimeout(()=>{ const i=document.getElementById("gatepw"); if(i) i.focus(); }, 50);
+})();
+
+/* ================= state ================= */
+const CATS = ["Shelter & sleep","Kitchen","Food & cooler","Fire","Camp comfort","Other"];
+let STATE = migrate(JSON.parse(document.getElementById("trip-state").textContent));
+let SHA = null;             /* git blob sha for compare-and-set */
+let loaded = false, saving = false, dirty = false, saveTimer = null, pollTimer = null;
+const person = id => STATE.people.find(p=>p.id===id) || null;
+let ME = store.get("ck-me");
+
+function migrate(s){
+  if (!s || typeof s !== "object") return STATE;
+  (s.gear||[]).forEach(g=>{
+    if (!Array.isArray(g.owners)) g.owners = g.owner ? [{p:g.owner, packed:!!g.packed}] : [];
+    delete g.owner; delete g.packed;
+    if (!(g.need >= 1)) g.need = 1;
+    g.need = Math.min(9, Math.max(1, Math.round(g.need)));
+  });
+  s.people = s.people||[]; s.jobs = s.jobs||[]; s.expenses = s.expenses||[];
+  s.v = 2;
+  return s;
+}
+
+/* ================= GitHub sync ================= */
+function ghHeaders(){
+  const h = {"Accept":"application/vnd.github+json", "X-GitHub-Api-Version":"2022-11-28"};
+  if (TOKEN) h["Authorization"] = "Bearer " + TOKEN;
+  return h;
+}
+async function fetchState(){
+  if (TOKEN){
+    const r = await fetch(`https://api.github.com/repos/${REPO}/contents/${DATA_PATH}?ref=${BRANCH}&_=${Date.now()}`, {headers: ghHeaders(), cache:"no-store"});
+    if (!r.ok) throw new Error("read "+r.status);
+    const d = await r.json();
+    return {state: migrate(JSON.parse(b64decUtf8(d.content))), sha: d.sha};
+  }
+  const r = await fetch(`https://raw.githubusercontent.com/${REPO}/${BRANCH}/${DATA_PATH}?_=${Date.now()}`, {cache:"no-store"});
+  if (!r.ok) throw new Error("read "+r.status);
+  return {state: migrate(await r.json()), sha: null};
+}
+async function pushState(){
+  const body = {
+    message: "camp-kiosk: update from the site",
+    content: b64encUtf8(JSON.stringify(STATE)),
+    branch: BRANCH
+  };
+  if (SHA) body.sha = SHA;
+  const r = await fetch(`https://api.github.com/repos/${REPO}/contents/${DATA_PATH}`, {
+    method:"PUT", headers: Object.assign({"Content-Type":"application/json"}, ghHeaders()),
+    body: JSON.stringify(body)
+  });
+  if (r.status === 409 || r.status === 422){ const e = new Error("conflict"); e.conflict = true; throw e; }
+  if (!r.ok) throw new Error("write "+r.status);
+  const d = await r.json();
+  SHA = d.content && d.content.sha || SHA;
+}
+function startSync(){
+  refresh(true);
+  clearInterval(pollTimer);
+  pollTimer = setInterval(()=>{ if (document.visibilityState==="visible" && !saving && !dirty) refresh(false); }, 15000);
+  document.addEventListener("visibilitychange", ()=>{ if (document.visibilityState==="visible" && !saving && !dirty) refresh(false); });
+  if (!TOKEN) $("#robanner").classList.add("on");
+}
+async function refresh(first){
+  try{
+    if (first) badge("Loading…", true);
+    const {state, sha} = await fetchState();
+    const changed = JSON.stringify(state) !== JSON.stringify(STATE);
+    SHA = sha;
+    if (changed && (first || (!dirty && !saving))){
+      STATE = state;
+      if (ME && !person(ME)){ ME = null; store.set("ck-me", null); }
+      render();
+    }
+    loaded = true;
+    badge(TOKEN ? "Synced" : "View only");
+  }catch(e){
+    if (first){ badge("Offline copy"); toast("Couldn’t load the latest — showing a cached start"); render(); }
+  }
+}
+function mutate(fn){
+  if (!TOKEN){ toast("Saving isn’t connected on this copy yet"); return; }
+  if (!loaded){ toast("Still loading — one sec"); return; }
+  fn();
+  render();
+  dirty = true;
+  badge("Saving…", true);
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveNow, 900);
+}
+async function saveNow(){
+  if (saving) return;
+  saving = true; dirty = false;
+  try{
+    await pushState();
+    badge("Synced");
+  }catch(e){
+    if (e.conflict){
+      badge("Updating…", true);
+      try{
+        const {state, sha} = await fetchState();
+        STATE = state; SHA = sha; render();
+        toast("Someone saved first — check your last tap and redo it if needed");
+        badge("Synced");
+      }catch(e2){ badge("Retry…"); dirty = true; }
+    }else{
+      dirty = true; badge("Will retry…", true);
+      clearTimeout(saveTimer); saveTimer = setTimeout(saveNow, 3000 + Math.random()*2000);
+    }
+  }finally{
+    saving = false;
+    if (dirty){ clearTimeout(saveTimer); saveTimer = setTimeout(saveNow, 700); }
+  }
+}
+
+/* ================= tabs ================= */
+let currentTab = sess.get("ck-tab") || "plan";
+function setTab(name){
+  currentTab = name; sess.set("ck-tab", name);
+  $$(".tab").forEach(b=> b.setAttribute("aria-selected", String(b.dataset.tab===name)));
+  $$("section[role=tabpanel]").forEach(p=> p.classList.toggle("on", p.id === "panel-"+name));
+}
+$$(".tab").forEach(b=> b.addEventListener("click", ()=> setTab(b.dataset.tab)));
+
+/* ================= renderers ================= */
+function checkBtn(on, act){
+  return `<button class="check ${on?"on":""}" data-act="${act}" aria-pressed="${on}" aria-label="toggle done">
+    <svg viewBox="0 0 16 16" fill="none"><path d="M2.5 8.5 6 12l7.5-8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>`;
+}
+function renderWho(){
+  const el = $("#who");
+  el.innerHTML = STATE.people.map(p=>
+    `<button class="pchip ${p.id===ME?"me":""}" data-me="${p.id}">${esc(p.name)}${p.id===ME?" ✓":""}</button>`
+  ).join("") || `<span class="sub" style="margin:0">add yourself in Plan → The crew</span>`;
+  $$("[data-me]", el).forEach(b=> b.addEventListener("click", ()=>{
+    ME = (ME === b.dataset.me) ? null : b.dataset.me;
+    store.set("ck-me", ME); render();
+  }));
+}
+function gearCovered(i){ return i.owners.length >= i.need; }
+function gearPacked(i){ return i.owners.length >= i.need && i.owners.every(o=>o.packed); }
+function renderStats(){
+  const g = STATE.gear, j = STATE.jobs;
+  const covered = g.filter(gearCovered).length;
+  const packed = g.filter(gearPacked).length;
+  const done = j.filter(i=>i.done).length;
+  const total = STATE.expenses.reduce((s,e)=>s+e.amount,0);
+  const per = STATE.people.length ? total/STATE.people.length : 0;
+  const pct = (a,b)=> b? Math.round(a/b*100) : 0;
+  $("#stats").innerHTML = `
+    <div class="stat"><b>${covered}/${g.length}</b><span>gear covered</span><div class="meter"><i style="width:${pct(covered,g.length)}%"></i></div></div>
+    <div class="stat"><b>${packed}/${g.length}</b><span>gear packed</span><div class="meter"><i style="width:${pct(packed,g.length)}%"></i></div></div>
+    <div class="stat"><b>${done}/${j.length}</b><span>jobs done</span><div class="meter"><i style="width:${pct(done,j.length)}%"></i></div></div>
+    <div class="stat"><b>${fmt(total)}</b><span>spent · ≈${fmt(per)} each</span></div>`;
+}
+function renderCrew(){
+  $("#crewlist").innerHTML = STATE.people.map(p=>
+    `<span class="pchip" style="display:inline-flex;align-items:center;gap:8px">
+       <span class="avatar">${esc(initials(p.name))}</span>${esc(p.name)}
+       <button class="del" data-delperson="${p.id}" aria-label="remove ${esc(p.name)}">✕</button>
+     </span>`).join("") || `<span class="sub" style="margin:0">Nobody yet — add the crew.</span>`;
+  $$("[data-delperson]").forEach(b=> b.addEventListener("click", ()=>{
+    const id = b.dataset.delperson;
+    const used = STATE.expenses.some(e=> e.paidBy===id || e.split.includes(id));
+    if (used){ toast("They’re part of an expense — remove those first"); return; }
+    mutate(()=>{
+      STATE.people = STATE.people.filter(p=>p.id!==id);
+      STATE.gear.forEach(i=>{ i.owners = i.owners.filter(o=>o.p!==id); });
+      STATE.jobs.forEach(i=>{ if(i.owner===id) i.owner=null; });
+      if (ME===id){ ME=null; store.set("ck-me",null); }
+    });
+  }));
+}
+function renderGear(){
+  const byCat = {};
+  STATE.gear.forEach(i=>{ (byCat[i.cat] = byCat[i.cat]||[]).push(i); });
+  $("#gearlist").innerHTML = CATS.filter(c=>byCat[c]).map(c=>`
+    <div class="kicker">${esc(c)}</div>
+    <div>${byCat[c].map(i=>{
+      const n = i.owners.length;
+      const pillCls = n===0 ? "" : (gearCovered(i) ? "full" : "partial");
+      const mine = ME && i.owners.some(o=>o.p===ME);
+      return `<div class="gearrow" data-id="${i.id}">
+        <div class="gtop">
+          <span class="countpill ${pillCls}">${n}/${i.need}</span>
+          <div class="body">
+            <div class="name ${gearPacked(i)?"done":""}">${esc(i.name)}</div>
+            ${i.note?`<div class="note">${esc(i.note)}</div>`:""}
+          </div>
+          <button class="needbtn" data-act="need" title="how many are needed">×${i.need}</button>
+          ${mine ? "" : `<button class="claim" data-act="claim">Claim</button>`}
+          <button class="del" data-act="del" aria-label="delete item">✕</button>
+        </div>
+        <div class="bringers">${i.owners.map(o=>{
+          const p = person(o.p); if (!p) return "";
+          const isMe = o.p===ME;
+          return `<span class="bringer ${isMe?"me":""} ${o.packed?"packed":""}" data-owner="${o.p}">
+            <button class="tick" data-act="tick" data-p="${o.p}" ${isMe?"":"disabled"} aria-label="packed toggle" title="${isMe?"tap when yours is packed":esc(p.name)+(o.packed?" — packed":"")}">✓</button>
+            <span class="bname">${esc(p.name)}</span>
+            ${isMe?`<button class="out" data-act="unclaim" data-p="${o.p}" aria-label="stop bringing this">✕</button>`:""}
+          </span>`;
+        }).join("")}</div>
+      </div>`;
+    }).join("")}</div>`).join("");
+
+  $$("#gearlist .gearrow").forEach(row=>{
+    const item = STATE.gear.find(i=>i.id===row.dataset.id);
+    const claim = $("[data-act=claim]", row);
+    if (claim) claim.addEventListener("click", ()=>{
+      if (!ME){ toast("Tap your name in “You are” first"); return; }
+      mutate(()=>{ if (!item.owners.some(o=>o.p===ME)) item.owners.push({p:ME, packed:false}); });
+    });
+    $("[data-act=need]", row).addEventListener("click", ()=> mutate(()=>{
+      item.need = item.need >= 6 ? 1 : item.need + 1;
+    }));
+    $("[data-act=del]", row).addEventListener("click", ()=> mutate(()=>{
+      STATE.gear = STATE.gear.filter(i=>i!==item);
+    }));
+    $$("[data-act=tick]", row).forEach(b=> b.addEventListener("click", ()=>{
+      if (b.dataset.p !== ME) return;
+      mutate(()=>{ const o = item.owners.find(o=>o.p===ME); if (o) o.packed = !o.packed; });
+    }));
+    $$("[data-act=unclaim]", row).forEach(b=> b.addEventListener("click", ()=> mutate(()=>{
+      item.owners = item.owners.filter(o=>o.p!==b.dataset.p);
+    })));
+  });
+}
+function renderJobs(){
+  $("#joblist").innerHTML = STATE.jobs.map(i=>{
+    const ownerBit = i.owner
+      ? (()=>{ const p = person(i.owner); const nm = p?p.name:"?";
+          return `<button class="owner-tag" data-act="claim" title="tap to release"><span class="avatar">${esc(initials(nm))}</span>${esc(nm)}</button>`; })()
+      : `<button class="claim" data-act="claim">Claim</button>`;
+    return `<div class="row" data-id="${i.id}">
+      ${checkBtn(i.done,"done")}
+      <div class="body">
+        <div class="name ${i.done?"done":""}">${esc(i.title)}</div>
+        ${i.note?`<div class="note">${esc(i.note)}</div>`:""}
+      </div>
+      ${ownerBit}
+      <button class="del" data-act="del" aria-label="delete">✕</button>
+    </div>`;
+  }).join("");
+  $$("#joblist .row").forEach(row=>{
+    const item = STATE.jobs.find(i=>i.id===row.dataset.id);
+    $("[data-act=done]",row).addEventListener("click", ()=> mutate(()=>{ item.done = !item.done; }));
+    $("[data-act=claim]",row).addEventListener("click", ()=>{
+      if (item.owner){ mutate(()=>{ item.owner = null; }); return; }
+      if (!ME){ toast("Tap your name in “You are” first"); return; }
+      mutate(()=>{ item.owner = ME; });
+    });
+    $("[data-act=del]",row).addEventListener("click", ()=> mutate(()=>{
+      STATE.jobs = STATE.jobs.filter(i=>i!==item);
+    }));
+  });
+}
+function balances(){
+  const bal = {}; STATE.people.forEach(p=> bal[p.id]=0);
+  STATE.expenses.forEach(e=>{
+    const split = e.split.filter(id=>bal[id]!==undefined);
+    if (!split.length) return;
+    const share = e.amount / split.length;
+    if (bal[e.paidBy]!==undefined) bal[e.paidBy] += e.amount;
+    split.forEach(id=> bal[id] -= share);
+  });
+  return bal;
+}
+function settleLines(bal){
+  const debt = [], cred = [];
+  Object.entries(bal).forEach(([id,v])=>{
+    if (v < -0.005) debt.push({id, v:-v}); else if (v > 0.005) cred.push({id, v});
+  });
+  debt.sort((a,b)=>b.v-a.v); cred.sort((a,b)=>b.v-a.v);
+  const out = []; let i=0, jx=0;
+  while (i<debt.length && jx<cred.length){
+    const pay = Math.min(debt[i].v, cred[jx].v);
+    out.push({from:debt[i].id, to:cred[jx].id, amt:pay});
+    debt[i].v -= pay; cred[jx].v -= pay;
+    if (debt[i].v < 0.005) i++;
+    if (cred[jx].v < 0.005) jx++;
+  }
+  return out;
+}
+function renderMoney(){
+  const total = STATE.expenses.reduce((s,e)=>s+e.amount,0);
+  $("#moneytotal").textContent = fmt(total) + " CAD";
+  const bal = balances();
+  $("#balances").innerHTML = STATE.people.map(p=>{
+    const v = bal[p.id]||0;
+    const cls = v>0.005 ? "pos" : v<-0.005 ? "neg" : "";
+    const txt = v>0.005 ? "gets back "+fmt(v) : v<-0.005 ? "owes "+fmt(-v) : "settled";
+    return `<div class="line"><span>${esc(p.name)}</span><b class="${cls}">${txt}</b></div>`;
+  }).join("") || `<div class="sub">Add people first.</div>`;
+  const lines = settleLines(bal);
+  $("#settle").hidden = !lines.length;
+  $("#settlelines").innerHTML = lines.map(l=>
+    `<div class="line"><span>${esc(person(l.from)?.name||"?")} → ${esc(person(l.to)?.name||"?")}</span><b>${fmt(l.amt)}</b></div>`
+  ).join("");
+  $("#expenselist").innerHTML = STATE.expenses.map(e=>{
+    const payer = person(e.paidBy);
+    const names = e.split.map(id=>person(id)?.name).filter(Boolean);
+    const splitTxt = names.length === STATE.people.length ? "everyone" : names.join(", ");
+    return `<div class="row" data-id="${e.id}">
+      <div class="body">
+        <div class="name">${esc(e.desc)}</div>
+        <div class="note">${esc(payer?payer.name:"?")} paid · split ${esc(splitTxt)}</div>
+      </div>
+      <span class="amount">${fmt(e.amount)}</span>
+      <button class="del" data-act="del" aria-label="delete">✕</button>
+    </div>`;
+  }).join("") || `<div class="sub" style="padding:6px 0">Nothing yet. Groceries, gas, firewood, the site fee — log it here and the split does itself.</div>`;
+  $$("#expenselist .row").forEach(row=>{
+    $("[data-act=del]",row).addEventListener("click", ()=> mutate(()=>{
+      STATE.expenses = STATE.expenses.filter(e=>e.id!==row.dataset.id);
+    }));
+  });
+}
+
+/* ---- personal pack (device-local) ---- */
+const PACK_TEMPLATE = [
+  ["Stay warm — 9°C overnight", ["Fleece or hoodie","Toque / beanie","Wool socks (2 pairs)","Long pants + warm sleep layer"]],
+  ["Rain is likely Friday", ["Rain jacket","Full change of dry clothes","Plastic bag for wet stuff"]],
+  ["Sleep", ["Sleeping bag","Sleeping pad","Pillow"]],
+  ["Daytime & lake", ["Swimsuit + towel","Sunglasses + hat","Runners or sandals"]],
+  ["Personal", ["Toiletries + wipes (no showers)","Any meds","Water bottle","Headlamp or flashlight","Phone + cable","Camp mug","Cash / card"]]
+];
+function renderPack(){
+  const checks = store.get("ck-pack") || {};
+  const custom = store.get("ck-pack-custom") || [];
+  let html = PACK_TEMPLATE.map(([grp,items])=>`
+    <div class="kicker">${esc(grp)}</div>
+    <div class="rows">${items.map(name=>{
+      const k = "t:"+name, on = !!checks[k];
+      return `<div class="row" data-k="${esc(k)}">
+        ${checkBtn(on,"tick")}
+        <div class="body"><div class="name ${on?"done":""}">${esc(name)}</div></div>
+      </div>`;
+    }).join("")}</div>`).join("");
+  if (custom.length){
+    html += `<div class="kicker">Your additions</div><div class="rows">` + custom.map(c=>{
+      const k = "c:"+c.id, on = !!checks[k];
+      return `<div class="row" data-k="${esc(k)}">
+        ${checkBtn(on,"tick")}
+        <div class="body"><div class="name ${on?"done":""}">${esc(c.name)}</div></div>
+        <button class="del" data-delc="${c.id}" aria-label="delete">✕</button>
+      </div>`;
+    }).join("") + `</div>`;
+  }
+  $("#packlist").innerHTML = html;
+  $$("#packlist .row").forEach(row=>{
+    $("[data-act=tick]",row).addEventListener("click", ()=>{
+      const c = store.get("ck-pack") || {};
+      c[row.dataset.k] = !c[row.dataset.k];
+      store.set("ck-pack", c); renderPack();
+    });
+  });
+  $$("[data-delc]").forEach(b=> b.addEventListener("click", ()=>{
+    store.set("ck-pack-custom", (store.get("ck-pack-custom")||[]).filter(c=>c.id!==b.dataset.delc));
+    renderPack();
+  }));
+}
+
+/* ================= forms ================= */
+$$("[data-open]").forEach(b=> b.addEventListener("click", ()=>{
+  const f = document.getElementById(b.dataset.open);
+  f.classList.add("on"); b.style.display="none";
+  const first = $("input",f); if (first) first.focus();
+  if (b.dataset.open==="addexpense") primeExpenseForm();
+  if (b.dataset.open==="addgear") primeGearForm();
+}));
+$$("[data-close]").forEach(b=> b.addEventListener("click", ()=>{
+  const f = b.closest("form"); f.classList.remove("on"); f.reset();
+  const opener = $(`[data-open="${f.id}"]`); if (opener) opener.style.display="";
+}));
+function closeForm(f){
+  f.classList.remove("on"); f.reset();
+  const opener = $(`[data-open="${f.id}"]`); if (opener) opener.style.display="";
+}
+$("#addperson").addEventListener("submit", ev=>{
+  ev.preventDefault();
+  const name = ev.target.elements["name"].value.trim(); if (!name) return;
+  if (STATE.people.some(p=>p.name.toLowerCase()===name.toLowerCase())){ toast("That name’s already on the list"); return; }
+  const id = uid("p");
+  mutate(()=> STATE.people.push({id, name}));
+  if (!ME && person(id)){ ME = id; store.set("ck-me", ME); render(); }
+  closeForm(ev.target);
+});
+function primeGearForm(){
+  $("#addgear select[name=cat]").innerHTML = CATS.map(c=>`<option>${esc(c)}</option>`).join("");
+}
+$("#addgear").addEventListener("submit", ev=>{
+  ev.preventDefault();
+  const f = ev.target;
+  const name = f.elements["name"].value.trim(); if (!name) return;
+  const need = Math.min(6, Math.max(1, parseInt(f.elements["need"].value,10)||1));
+  mutate(()=> STATE.gear.push({
+    id:uid("g"), cat:f.elements["cat"].value, name, note:f.elements["note"].value.trim(),
+    need, owners: ME ? [{p:ME, packed:false}] : []
+  }));
+  closeForm(f);
+});
+$("#addjob").addEventListener("submit", ev=>{
+  ev.preventDefault();
+  const f = ev.target;
+  const title = f.elements["title"].value.trim(); if (!title) return;
+  mutate(()=> STATE.jobs.push({id:uid("j"), title, note:f.elements["note"].value.trim(), owner:null, done:false}));
+  closeForm(f);
+});
+let splitSel = new Set();
+function primeExpenseForm(){
+  const sel = $("#addexpense select[name=paidBy]");
+  sel.innerHTML = STATE.people.map(p=>`<option value="${p.id}" ${p.id===ME?"selected":""}>${esc(p.name)} paid</option>`).join("");
+  splitSel = new Set(STATE.people.map(p=>p.id));
+  drawSplit();
+}
+function drawSplit(){
+  $("#splitpick").innerHTML = STATE.people.map(p=>
+    `<button type="button" class="pchip ${splitSel.has(p.id)?"me":""}" data-split="${p.id}">${esc(p.name)}</button>`
+  ).join("");
+  $$("[data-split]").forEach(b=> b.addEventListener("click", ()=>{
+    const id = b.dataset.split;
+    if (splitSel.has(id)) splitSel.delete(id); else splitSel.add(id);
+    drawSplit();
+  }));
+}
+$("#addexpense").addEventListener("submit", ev=>{
+  ev.preventDefault();
+  const f = ev.target;
+  if (!STATE.people.length){ toast("Add people first (Plan → The crew)"); return; }
+  const amount = Math.round(parseFloat(f.elements["amount"].value)*100)/100;
+  if (!(amount>0)){ toast("Enter an amount"); return; }
+  if (!splitSel.size){ toast("Pick at least one person to split between"); return; }
+  mutate(()=> STATE.expenses.push({
+    id:uid("e"), desc:f.elements["desc"].value.trim()||"Expense", amount,
+    paidBy:f.elements["paidBy"].value, split:Array.from(splitSel)
+  }));
+  closeForm(f);
+});
+$("#addpack").addEventListener("submit", ev=>{
+  ev.preventDefault();
+  const name = ev.target.elements["name"].value.trim(); if (!name) return;
+  const custom = store.get("ck-pack-custom") || [];
+  custom.push({id:uid("c"), name});
+  store.set("ck-pack-custom", custom);
+  renderPack(); closeForm(ev.target);
+});
+
+/* ================= countdown ================= */
+(function(){
+  try{
+    const now = new Date();
+    const arrive = new Date(2026,7,28,14,0,0);
+    const leave  = new Date(2026,7,29,14,0,0);
+    let txt = "Check-in 2 pm";
+    if (now < arrive){
+      const h = Math.round((arrive-now)/36e5);
+      txt = h<=48 ? (h<=1? "Leaving within the hour" : h+"h to check-in") : Math.ceil(h/24)+" days to go";
+    } else if (now <= leave){ txt = "Happening now"; }
+    else { txt = "Trip complete"; }
+    $("#countdown").textContent = txt;
+  }catch(e){}
+})();
+
+/* ================= topo decoration ================= */
+(function(){
+  const cv = $("#topo"); const hd = cv.parentElement;
+  function draw(){
+    const w = hd.clientWidth || 720, h = hd.clientHeight || 160;
+    const dpr = Math.min(window.devicePixelRatio||1, 2);
+    cv.width = w*dpr; cv.height = h*dpr;
+    const ctx = cv.getContext("2d"); ctx.scale(dpr,dpr);
+    ctx.clearRect(0,0,w,h);
+    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue("--pine").trim();
+    ctx.globalAlpha = .14; ctx.lineWidth = 1.1;
+    const cx = w*0.82, cy = h*0.1;
+    for (let r=30; r<Math.max(w,h)*1.1; r+=26){
+      ctx.beginPath();
+      for (let a=0; a<=Math.PI*2+0.05; a+=0.08){
+        const wob = Math.sin(a*3 + r*0.13)*7 + Math.cos(a*5 - r*0.07)*4;
+        const x = cx + Math.cos(a)*(r+wob), y = cy + Math.sin(a)*(r+wob)*0.72;
+        if (a===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+    }
+  }
+  draw();
+  window.addEventListener("resize", draw);
+  try{ matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw); }catch(e){}
+})();
+
+/* ================= boot ================= */
+function render(){
+  renderWho(); renderStats(); renderCrew(); renderGear(); renderJobs(); renderMoney();
+}
+render();
+renderPack();
+setTab(currentTab);
+</script>
+</body>
+</html>
